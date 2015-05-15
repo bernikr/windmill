@@ -6,9 +6,8 @@ int lineLength = 1000;
 
 // status variables
 float phi;
-PVector pivot;
-PVector[] points = new PVector[numberOfPoints];
-float[] pivotToPointAngles = new float[numberOfPoints];
+Point pivot;
+Point[] points = new Point[numberOfPoints];
 int currentPivotId;
 boolean paused = false;
 
@@ -46,8 +45,8 @@ void newPivot(int pivotId) {
   pivot = points[pivotId];
   currentPivotId = pivotId;
   for(int i = 0; i < numberOfPoints; i++) {
-    pivotToPointAngles[i] = atan2(points[i].y - pivot.y, points[i].x - pivot.x);
-    if(pivotToPointAngles[i] < 0) pivotToPointAngles[i] += PI;
+    points[i].angle = atan2(points[i].y - pivot.y, points[i].x - pivot.x);
+    if(points[i].angle < 0) points[i].angle += PI;
   }
 }
 void mainLoop() {
@@ -55,12 +54,20 @@ void mainLoop() {
   if(phi > PI) phi -= PI;
   
   for(int i = 0; i < numberOfPoints; i++) {
-    if(   pivotToPointAngles[i] >= phi
-       && pivotToPointAngles[i] <= phi + speed
+    if(   points[i].angle >= phi
+       && points[i].angle <= phi + speed
        && i != currentPivotId)
     {
       newPivot(i);
       break;
     }
+  }
+}
+
+class Point {
+  public float x, y, angle;
+  Point(float nx, float ny) {
+    x = nx;
+    y = ny;
   }
 }
