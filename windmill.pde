@@ -23,12 +23,21 @@ void draw() {
   display();
   if(!paused) mainLoop(); 
 }
+
 void keyPressed() {
   paused = !paused;
 }
 
 void mousePressed() {
-  addPoint(mouseX, mouseY);
+  p = new Point(mouseX, mouseY);
+  removed = false;
+  for (int i = points.size() - 1; i >= 0; i--) {
+    if(p.distanceSq(points.get(i)) < 100) {
+      points.remove(i);
+      removed = true;
+    }
+  }
+  if(!removed) addPoint(p);
 }
 
 void display() {
@@ -47,6 +56,10 @@ void display() {
 
 void newPivot(Point p) {
   pivot = p;
+  recalculate();
+}
+
+void recalculate() {
   for(Point p : points) {
     p.angle = atan2(p.y - pivot.y, p.x - pivot.x);
     if(p.angle < 0) p.angle += PI;
@@ -67,8 +80,8 @@ void mainLoop() {
   }
 }
 
-void addPoint(float x, float y){
-  points.add(new Point(x, y));
+void addPoint(Point p){
+  points.add(p);
   recalculate();
 }
 
@@ -77,5 +90,8 @@ class Point {
   Point(float nx, float ny) {
     x = nx;
     y = ny;
+  }
+  float distanceSq(Point p) {
+    return sq(this.x - p.x) + sq(this.y - p.y);
   }
 }
