@@ -7,16 +7,16 @@ int lineLength = 1000;
 // status variables
 float phi;
 Point pivot;
-Point[] points = new Point[numberOfPoints];
+ArrayList<Point> points = new ArrayList<Point>();
 int currentPivotId;
 boolean paused = false;
 
 void setup() {
   size(500, 500);
   for(int i = 0; i < numberOfPoints; i++) {
-    points[i] = new PVector(random(),random());
+    points.add(new Point(random(),random()));
   }
-  newPivot((int)random(numberOfPoints+1));
+  newPivot(points.get((int)random(numberOfPoints+1)));
   phi = random(PI);
 }
 
@@ -30,8 +30,8 @@ void draw() {
 void display() {
   background(255);
   strokeWeight(5);
-  for(int i = 0; i < numberOfPoints; i++) {
-    point(points[i].x * sizeValue, points[i].y * sizeValue);
+  for(Point p : points) {
+    point(p.x * sizeValue, p.y * sizeValue);
   }
  
   strokeWeight(2); 
@@ -41,24 +41,22 @@ void display() {
        pivot.y * sizeValue - sin(phi) * lineLength);
 }
 
-void newPivot(int pivotId) {
-  pivot = points[pivotId];
-  currentPivotId = pivotId;
-  for(int i = 0; i < numberOfPoints; i++) {
-    points[i].angle = atan2(points[i].y - pivot.y, points[i].x - pivot.x);
-    if(points[i].angle < 0) points[i].angle += PI;
+void newPivot(Point p) {
+  pivot = p;
+  for(Point p : points) {
+    p.angle = atan2(p.y - pivot.y, p.x - pivot.x);
+    if(p.angle < 0) p.angle += PI;
   }
 }
 void mainLoop() {
   phi += speed;
   if(phi > PI) phi -= PI;
   
-  for(int i = 0; i < numberOfPoints; i++) {
-    if(   points[i].angle >= phi
-       && points[i].angle <= phi + speed
-       && i != currentPivotId)
+  for(Point p : points) {
+    if(   p.angle >= phi
+       && p.angle <= phi + speed)
     {
-      newPivot(i);
+      newPivot(p);
       break;
     }
   }
