@@ -13,7 +13,7 @@ boolean paused = false;
 void setup() {
   size(500, 500);
   for(int i = 0; i < numberOfPoints; i++) {
-    points.add(new Point(random(500),random(500)));
+    points.add(new Point(random(100,400),random(100,400)));
   }
   newPivot(points.get((int)random(numberOfPoints+1)));
   phi = random(PI);
