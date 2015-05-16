@@ -8,9 +8,11 @@ float resolution = 0.001;
 float phi;
 Point pivot;
 ArrayList<Point> points = new ArrayList<Point>();
+ArrayList<Point> history = new ArrayList<Point>();
 int currentPivotId;
 Point mousePivotDif;
 boolean locked = false;
+boolean recordHistory = true;
 
 void setup() {
   size(500, 500);
@@ -66,6 +68,7 @@ void mouseDragged() {
             phi = phi % PI;
         }
         recalculate();
+        resetHistory();
     }
 }
 
@@ -80,6 +83,22 @@ void display() {
     point(p.x, p.y);
   }
 
+    if(colored){
+        for(int i = 0; i < history.size()-1; i++) {
+            strokeWeight(1);
+            stroke(128);
+            line(history.get(i).x,
+                 history.get(i).y,
+                 history.get(i+1).x,
+                 history.get(i+1).y);
+
+            stroke(0,255,0);
+            strokeWeight(5);
+            point(history.get(i).x, history.get(i).y);
+        }
+    }
+
+    stroke(0);
   strokeWeight(2);
   line(pivot.x + cos(phi) * lineLength,
        pivot.y + sin(phi) * lineLength,
@@ -94,6 +113,16 @@ void display() {
 void newPivot(Point p) {
   pivot = new Point(p);
   recalculate();
+  i = history.size();
+  if(i>2){
+      if(   history.get(0).x == history.get(i-1).x
+         && history.get(0).y == history.get(i-1).y
+         && history.get(1).x == p.x
+         && history.get(1).y == p.y){
+        recordHistory = false;
+     }
+  }
+  if(recordHistory) history.add(p);
 }
 
 void recalculate() {
@@ -122,6 +151,7 @@ void mainLoop() {
 void addPoint(Point p){
   points.add(p);
   recalculate();
+  resetHistory();
 }
 
 void solve(){
@@ -148,6 +178,11 @@ void solve(){
       break;
     }
   }
+}
+
+void resetHistory(){
+    history = new ArrayList<Point>();
+    recordHistory = true;
 }
 
 class Point {
