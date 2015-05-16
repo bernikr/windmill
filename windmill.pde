@@ -1,7 +1,8 @@
 //config
-float speed = 0.01;
+float speed = 0.02;
 int numberOfPoints = 10;
 int lineLength = 1000;
+float resolution = 0.001;
 
 // status variables
 float phi;
@@ -106,13 +107,15 @@ void mainLoop() {
   phi += speed;
   if(phi > PI) phi -= PI;
 
-  for(Point p : points) {
-    if(   p.angle >= phi
-       && p.angle <= phi + speed)
-    {
-      newPivot(p);
-      break;
-    }
+  for(float s = 0; s <= speed; s += resolution){
+      for(Point p : points) {
+        if(   p.angle >= phi + s
+           && p.angle <= phi + s + resolution)
+        {
+          newPivot(p);
+          break;
+        }
+     }
   }
 }
 
