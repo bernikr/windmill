@@ -174,7 +174,7 @@ void solve(){
 
       }
     }
-    if(count == (int)points.size()/2){
+    if(count == (int)(points.size()/2)){
       phi = alpha;
       if(phi > PI) phi -= PI;
       recalculate();
