@@ -1,17 +1,12 @@
 <!DOCTYPE html>
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-		<title>windmill : Built with Processing and Processing.js</title>
+		<title>Windmill</title>
 		<link rel="icon"  type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAQAAVzABAEAjBQAaDwYAWjUGAGE6CQBrQQ0ATS8PAFhAJwBUQC8AbFI6AHVXPACBZk4A4NrWAPb19QAAAAAAAMmZmZmZmgAJIwAAAAAAcMIjPjA+PjAKpxIuMDMzMAm0Ii4zMzMACaIiLt3dMAAJtyIuIzPQAAm0Un5yM+IzKLRkfncy4iIotRF+dyLkIiq0QX53F+EiGrQUTkd34iIatEVu7u5iIVrBVVRBRFRVbAtGZGZla2uwAMu7u7u8vADAAwAAgAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIABAADAAwAA" />
 		<meta name="Generator" content="Processing" />
-		<!-- - - - - - - - - - - - - - - - - - - - - 
-		+
-		+    Wondering how this works? 
-		+
-		+    Go to: http://processing.org/
-		+    and: http://processingjs.org/
-		+
-		+ - - - - - - - - - - - - - - - - - - - - -->
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 		<style type="text/css">
 	body {
 	  background-color: #333; color: #bbb; line-height: normal;
@@ -19,10 +14,10 @@
 	  font-size: 11px; font-weight: normal; text-decoration: none;
 		  line-height: 1.5em;
 	}
-	a img { 
+	a img {
 		border: 0px solid transparent;
 	}
-	a, a:link, a:visited, a:active, a:hover { 
+	a, a:link, a:visited, a:active, a:hover {
 		color: #cdcdcd; text-decoration: underline;
 	}
 	h1 {
@@ -30,23 +25,26 @@
 		width: 100%; letter-spacing: 0.1em;
 		margin-bottom: 1em; font-size: 1.65em;
 	}
-	canvas { 
-		display: block; 
-		outline: 0px; 
-		margin-bottom: 1.5em; 
+	canvas {
+		display: block;
+		outline: 0px;
+		margin-bottom: 1.5em;
 	}
-	#content { 
+	#content {
 		margin: 50px auto 0px auto; padding: 25px 25px 15px 25px;
 		width: 500px; min-width: 300px; overflow: auto;
-		border-left: 1px solid #444; border-top: 1px solid #444; 
+		border-left: 1px solid #444; border-top: 1px solid #444;
 		border-right: 1px solid #333; border-bottom: 1px solid #333;
 		background-color: #3d3d3d;
+		box-sizing: content-box;
 	}
 		</style>
 		<!--[if lt IE 9]>
 			<script type="text/javascript">alert("Your browser does not support the canvas tag.");</script>
 		<![endif]-->
+		<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 		<script src="processing-js/processing.js" type="text/javascript"></script>
+		<script src="windmill.js" type="text/javascript"></script>
 		<script type="text/javascript">
 			// convenience function to get the id attribute of generated sketch html element
 			function getProcessingSketchId () { return 'windmill'; }
@@ -62,19 +60,18 @@
 				<noscript>
 					<p>JavaScript is required to view the contents of this page.</p>
 				</noscript>
+				<button id="btn-pause" type="button" class="btn btn-default"><i class="fa fa-fw fa-pause"></i></button>
+				<div id="btn-mode" class="btn-group" role="group">
+					<button data-mode="point" type="button" class="btn btn-default active"><i class="fa fa-dot-circle-o"></i></button>
+					<button data-mode="move" type="button" class="btn btn-default"><i class="fa fa-arrows"></i></button>
+					<button data-mode="rotate" type="button" class="btn btn-default"><i class="fa fa-repeat"></i></button>
+				</div>
 			</div>
 			<h1>Windmill</h1>
 			<div id="description">
-			<p>This is a visual representation of <a href="http://www.artofproblemsolving.com/wiki/index.php/2011_IMO_Problems/Problem_2">Problem 2 of the 2011 IMO</a>.</p>
-			<h2>Controls:</h2>
-			<ul>
-			<li>Click to create and remove points</li>
-			<li>Pause the simulation with Space</li>
-			<li>Use the arrow keys to move the line and its point of rotation</li>
-			<li>Rotate the line with '.' and '-'</li>
+			<p>This is a visualization of <a href="http://www.artofproblemsolving.com/wiki/index.php/2011_IMO_Problems/Problem_2">Problem 2 of the 2011 IMO</a>.</p>
 			</ul>
 			</div>
-			<p id="sources">Source code: <a href="windmill.pde">windmill</a> </p>
 			<p>
 			Built with <a href="http://processing.org" title="Processing">Processing</a>
 			and <a href="http://processingjs.org" title="Processing.js">Processing.js</a>

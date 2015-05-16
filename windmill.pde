@@ -8,7 +8,8 @@ float phi;
 Point pivot;
 ArrayList<Point> points = new ArrayList<Point>();
 int currentPivotId;
-boolean paused = false;
+Point mousePivotDif;
+boolean locked = false;
 
 void setup() {
   size(500, 500);
@@ -17,49 +18,58 @@ void setup() {
   }
   newPivot(points.get((int)random(numberOfPoints+1)));
   solve();
+  mousePivotDif = new Point(0, 0);
 }
 
 void draw() {
   display();
-  if(!paused) mainLoop(); 
+  if(!paused) mainLoop();
 }
 
 void keyPressed() {
-  if (key == CODED) {
-    if (keyCode == UP) {
-      pivot.y -= 5;
-    } else if (keyCode == DOWN) {
-      pivot.y += 5;
-    } else if (keyCode == LEFT) {
-      pivot.x -= 5;
-    } else if (keyCode == RIGHT) {
-      pivot.x += 5;
-    } 
-  } else {
-    if(key == ' ') {
-      paused = !paused;
-    } else if (key == '.') {
-      phi -= 5 * speed;
-      if(phi < 0) phi += PI;
-    } else if (key == '-') {
-      phi += 5 * speed;
-      if(phi > PI) phi -= PI;
-    }
-  }
-  recalculate();
+
 }
 
 void mousePressed() {
-  p = new Point(mouseX, mouseY);
-  removed = false;
-  for (int i = points.size() - 1; i >= 0; i--) {
-    if(p.distanceSq(points.get(i)) < 100) {
-      points.remove(i);
-      removed = true;
+    if(mouseMode == 'point') {
+        p = new Point(mouseX, mouseY);
+        removed = false;
+        for (int i = points.size() - 1; i >= 0; i--) {
+            if(p.distanceSq(points.get(i)) < 100) {
+                points.remove(i);
+                removed = true;
+            }
+        }
+        if(!removed) addPoint(p);
+        recalculate();
     }
-  }
-  if(!removed) addPoint(p);
+    mousePivotDif.x = mouseX - pivot.x;
+    mousePivotDif.y = mouseY - pivot.y;
+    mousePivotDif.angle = atan2(mouseY - pivot.y, mouseX - pivot.x) - phi;
+    locked = true;
 }
+
+void mouseReleased() {
+  locked = false;
+}
+
+void mouseDragged() {
+    if(locked){
+        if(mouseMode == 'move') {
+            pivot.x = mouseX - mousePivotDif.x;
+            pivot.y = mouseY - mousePivotDif.y;
+        } else if(mouseMode == 'rotate') {
+            phi = atan2(mouseY - pivot.y, mouseX - pivot.x) - mousePivotDif.angle;
+            phi = phi % PI;
+            phi += 2*PI;
+            phi = phi % PI;
+        }
+        recalculate();
+    }
+}
+
+
+
 
 void display() {
   background(255);
@@ -68,13 +78,13 @@ void display() {
   for(Point p : points) {
     point(p.x, p.y);
   }
-  
-  strokeWeight(2); 
+
+  strokeWeight(2);
   line(pivot.x + cos(phi) * lineLength,
        pivot.y + sin(phi) * lineLength,
        pivot.x - cos(phi) * lineLength,
        pivot.y - sin(phi) * lineLength);
-  
+
   stroke(255,0,0);
   strokeWeight(5);
   point(pivot.x, pivot.y);
@@ -95,7 +105,7 @@ void recalculate() {
 void mainLoop() {
   phi += speed;
   if(phi > PI) phi -= PI;
-  
+
   for(Point p : points) {
     if(   p.angle >= phi
        && p.angle <= phi + speed)
@@ -125,7 +135,7 @@ void solve(){
         count++;
       } else if(p.angle < alpha - PI
              && p.angle > alpha - 3*PI) {
-        
+
       }
     }
     if(count == (int)points.size()/2){
