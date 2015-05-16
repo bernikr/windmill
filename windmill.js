@@ -15,4 +15,7 @@ $(function(){
             $(this).toggleClass('active', data == $(this).data('mode'));
         });
     });
+    $('#btn-solve').click(function(){
+        Processing.getInstanceById('windmill').solve();
+    });
 });
