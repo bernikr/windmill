@@ -16,7 +16,7 @@ void setup() {
     points.add(new Point(random(100,400),random(100,400)));
   }
   newPivot(points.get((int)random(numberOfPoints+1)));
-  phi = random(PI);
+  solve();
 }
 
 void draw() {
@@ -109,6 +109,32 @@ void mainLoop() {
 void addPoint(Point p){
   points.add(p);
   recalculate();
+}
+
+void solve(){
+  float step = 0.01;
+  for(Point p : points) {
+    p.angle = atan2(p.y - pivot.y, p.x - pivot.x);
+    if(p.angle < 0) p.angle += 2*PI;
+  }
+  for(float alpha = 0; alpha <= 2*PI; alpha += step){
+    int count = 0;
+    for(Point p : points) {
+      if(p.angle > alpha
+      && p.angle < alpha + PI) {
+        count++;
+      } else if(p.angle < alpha - PI
+             && p.angle > alpha - 3*PI) {
+        
+      }
+    }
+    if(count == (int)points.size()/2){
+      phi = alpha;
+      if(phi > PI) phi -= PI;
+      recalculate();
+      break;
+    }
+  }
 }
 
 class Point {
