@@ -41,10 +41,13 @@ void mousePressed() {
             if(p.distanceSq(points.get(i)) < 100) {
                 points.remove(i);
                 removed = true;
+                resetHistory();
+
             }
         }
         if(!removed) addPoint(p);
         recalculate();
+        resetHistory();
     }
     mousePivotDif.x = mouseX - pivot.x;
     mousePivotDif.y = mouseY - pivot.y;
@@ -128,7 +131,7 @@ void newPivot(Point p) {
 void recalculate() {
   for(Point p : points) {
     p.angle = atan2(p.y - pivot.y, p.x - pivot.x);
-    if(p.angle < 0) p.angle += PI;
+    if(p.angle < resolution) p.angle += PI;
   }
 }
 
@@ -178,6 +181,7 @@ void solve(){
       break;
     }
   }
+  resetHistory();
 }
 
 void resetHistory(){
