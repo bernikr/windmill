@@ -13,7 +13,7 @@ var windmill = {
 		},
 		angle: 0,
 	},
-	history: {
+	graph: {
 		show: false,
 		record: true,
 		data: [],
@@ -35,27 +35,27 @@ var windmill = {
 windmill.line.newPivot = function(p){
 	windmill.line.pivot = $.extend({}, p);
 	windmill.relativeAngels.recalculate();
-	i = windmill.history.data.length;
+	i = windmill.graph.data.length;
 	if(i > 2){
-		if(windmill.history.data[0].x == windmill.history.data[i-1].x
-		&& windmill.history.data[0].y == windmill.history.data[i-1].y
-		&& windmill.history.data[1].x == p.x
-		&& windmill.history.data[1].y == p.y){
-			windmill.history.record = false;
+		if(windmill.graph.data[0].x == windmill.graph.data[i-1].x
+		&& windmill.graph.data[0].y == windmill.graph.data[i-1].y
+		&& windmill.graph.data[1].x == p.x
+		&& windmill.graph.data[1].y == p.y){
+			windmill.graph.record = false;
 		}
 	}
-	if(windmill.history.record) windmill.history.data.push(p);
+	if(windmill.graph.record) windmill.graph.data.push(p);
 }
 
 windmill.points.add = function(p){
 	windmill.points.push(p);
 	windmill.relativeAngels.recalculate();
-	windmill.history.reset();
+	windmill.graph.reset();
 }
 
-windmill.history.reset = function(){
-	windmill.history.data = [];
-	windmill.history.record = true;
+windmill.graph.reset = function(){
+	windmill.graph.data = [];
+	windmill.graph.record = true;
 }
 
 windmill.relativeAngels.recalculate = function(){
@@ -88,7 +88,7 @@ windmill.solve = function() {
 			break;
 		}
 	}
-	windmill.history.reset();
+	windmill.graph.reset();
 }
 
 
@@ -109,11 +109,11 @@ $(function(){
 	$('#btn-solve').click(function(){
 		windmill.solve();
 	});
-	$('#btn-color-toggle').click(function(){
-		windmill.history.show = !windmill.history.show;
-		$(this).toggleClass('active', windmill.history.show);
+	$('#btn-graph-toggle').click(function(){
+		windmill.graph.show = !windmill.graph.show;
+		$(this).toggleClass('active', windmill.graph.show);
 	});
-	$('#btn-color-reset').click(function(){
-		windmill.history.reset();
+	$('#btn-graph-reset').click(function(){
+		windmill.graph.reset();
 	});
 });

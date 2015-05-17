@@ -26,13 +26,13 @@ void mousePressed() {
 			if(windmill.helpers.distanceSq(p, windmill.points[i]) < 100) {
 				windmill.points.splice(i, 1);
 				removed = true;
-				windmill.history.reset();
+				windmill.graph.reset();
 
 			}
 		}
 		if(!removed) windmill.points.add(p);
 		windmill.relativeAngels.recalculate();
-		windmill.history.reset();
+		windmill.graph.reset();
 	}
 	windmill.mouse.relationToPivot.x = mouseX - windmill.line.pivot.x;
 	windmill.mouse.relationToPivot.y = mouseY - windmill.line.pivot.y;
@@ -56,7 +56,7 @@ void mouseDragged() {
 			windmill.line.angle = windmill.line.angle % PI;
 		}
 		windmill.relativeAngels.recalculate();
-		windmill.history.reset();
+		windmill.graph.reset();
 	}
 }
 
@@ -69,18 +69,18 @@ void display() {
 		point(windmill.points[i].x, windmill.points[i].y);
 	}
 
-	if(windmill.history.show){
-		for(int i = 0; i < windmill.history.data.length-1; i++) {
+	if(windmill.graph.show){
+		for(int i = 0; i < windmill.graph.data.length-1; i++) {
 			strokeWeight(1);
 			stroke(128);
-			line(windmill.history.data[i].x,
-			     windmill.history.data[i].y,
-			     windmill.history.data[i+1].x,
-			     windmill.history.data[i+1].y);
+			line(windmill.graph.data[i].x,
+			     windmill.graph.data[i].y,
+			     windmill.graph.data[i+1].x,
+			     windmill.graph.data[i+1].y);
 
 			stroke(0,255,0);
 			strokeWeight(5);
-			point(windmill.history.data[i].x, windmill.history.data[i].y);
+			point(windmill.graph.data[i].x, windmill.graph.data[i].y);
 		}
 	}
 
