@@ -28,7 +28,69 @@ var windmill = {
 		},
 	},
 	points: [],
+	relativeAngels: [],
+	helpers: {},
 }
+
+windmill.line.newPivot = function(p){
+	windmill.line.pivot = $.extend({}, p);
+	windmill.relativeAngels.recalculate();
+	i = windmill.history.data.length;
+	if(i > 2){
+		if(windmill.history.data[0].x == windmill.history.data[i-1].x
+		&& windmill.history.data[0].y == windmill.history.data[i-1].y
+		&& windmill.history.data[1].x == p.x
+		&& windmill.history.data[1].y == p.y){
+			windmill.history.record = false;
+		}
+	}
+	if(windmill.history.record) windmill.history.data.push(p);
+}
+
+windmill.points.add = function(p){
+	windmill.points.push(p);
+	windmill.relativeAngels.recalculate();
+	windmill.history.reset();
+}
+
+windmill.history.reset = function(){
+	windmill.history.data = [];
+	windmill.history.record = true;
+}
+
+windmill.relativeAngels.recalculate = function(){
+	for(i = 0; i < windmill.points.length; i++) {
+		windmill.relativeAngels[i] = Math.atan2(windmill.points[i].y - windmill.line.pivot.y, windmill.points[i].x - windmill.line.pivot.x);
+		if(windmill.relativeAngels[i] < windmill.resolution) windmill.relativeAngels[i] += Math.PI;
+	}
+}
+
+windmill.helpers.distanceSq = function(p1, p2){
+	return Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2);
+}
+
+windmill.solve = function() {
+	for(i = 0; i < windmill.points.length; i++) {
+		windmill.relativeAngels[i] = Math.atan2(windmill.points[i].y - windmill.line.pivot.y, windmill.points[i].x - windmill.line.pivot.x);
+		if(windmill.relativeAngels[i] < 0) windmill.relativeAngels[i] += 2 * Math.PI;
+	}
+	for(alpha = 0; alpha <= 2 * Math.PI; alpha += windmill.resolution){
+		count = 0;
+		for(i = 0; i < windmill.points.length; i++) {
+			if(windmill.relativeAngels[i] > alpha
+			&& windmill.relativeAngels[i] < alpha + Math.PI)
+				count++;
+			}
+		if(count == Math.floor(windmill.points.length/2)){
+			windmill.line.angle = alpha;
+			if(windmill.line.angle > Math.PI) windmill.line.angle -= Math.PI;
+			windmill.relativeAngels.recalculate();
+			break;
+		}
+	}
+	windmill.history.reset();
+}
+
 
 $(function(){
 	$('#btn-pause').click(function(){
@@ -45,13 +107,13 @@ $(function(){
 		});
 	});
 	$('#btn-solve').click(function(){
-		Processing.getInstanceById('windmill').solve();
+		windmill.solve();
 	});
 	$('#btn-color-toggle').click(function(){
 		windmill.history.show = !windmill.history.show;
 		$(this).toggleClass('active', windmill.history.show);
 	});
 	$('#btn-color-reset').click(function(){
-		Processing.getInstanceById('windmill').resetHistory();
+		windmill.history.reset();
 	});
 });

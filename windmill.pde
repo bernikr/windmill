@@ -6,8 +6,8 @@ void setup() {
 			y: Math.random()*300 + 100,
 		});
 	}
-	newPivot(windmill.points[(int)random(windmill.constants.numberOfStartingPoints)]);
-	solve();
+	windmill.line.newPivot(windmill.points[(int)random(windmill.constants.numberOfStartingPoints)]);
+	windmill.solve();
 }
 
 void draw() {
@@ -23,16 +23,16 @@ void mousePressed() {
 		};
 		removed = false;
 		for (int i = windmill.points.length - 1; i >= 0; i--) {
-			if(distanceSq(p, windmill.points[i]) < 100) {
+			if(windmill.helpers.distanceSq(p, windmill.points[i]) < 100) {
 				windmill.points.splice(i, 1);
 				removed = true;
-				resetHistory();
+				windmill.history.reset();
 
 			}
 		}
-		if(!removed) addPoint(p);
-		recalculate();
-		resetHistory();
+		if(!removed) windmill.points.add(p);
+		windmill.relativeAngels.recalculate();
+		windmill.history.reset();
 	}
 	windmill.mouse.relationToPivot.x = mouseX - windmill.line.pivot.x;
 	windmill.mouse.relationToPivot.y = mouseY - windmill.line.pivot.y;
@@ -55,8 +55,8 @@ void mouseDragged() {
 			windmill.line.angle += 2*PI;
 			windmill.line.angle = windmill.line.angle % PI;
 		}
-		recalculate();
-		resetHistory();
+		windmill.relativeAngels.recalculate();
+		windmill.history.reset();
 	}
 }
 
@@ -96,94 +96,18 @@ void display() {
 	point(windmill.line.pivot.x, windmill.line.pivot.y);
 }
 
-void newPivot(p) {
-	windmill.line.pivot = $.extend({}, p);
-	recalculate();
-	i = windmill.history.data.length;
-	if(i > 2){
-		if(windmill.history.data[0].x == windmill.history.data[i-1].x
-		&& windmill.history.data[0].y == windmill.history.data[i-1].y
-		&& windmill.history.data[1].x == p.x
-		&& windmill.history.data[1].y == p.y){
-			windmill.history.record = false;
-		}
-	}
-	if(windmill.history.record) windmill.history.data.push(p);
-}
-
-void recalculate() {
-	for(int i = 0; i < windmill.points.length; i++) {
-		windmill.points[i].angle = atan2(windmill.points[i].y - windmill.line.pivot.y, windmill.points[i].x - windmill.line.pivot.x);
-		if(windmill.points[i].angle < windmill.resolution) windmill.points[i].angle += PI;
-	}
-}
-
 void mainLoop() {
 	windmill.line.angle += windmill.speed;
 	if(windmill.line.angle > PI) windmill.line.angle -= PI;
 
 	for(float s = 0; s <= windmill.speed; s += windmill.resolution){
 		for(int i = 0; i < windmill.points.length; i++) {
-			if(windmill.points[i].angle >= windmill.line.angle + s
-			&& windmill.points[i].angle <= windmill.line.angle + s + windmill.resolution)
+			if(windmill.relativeAngels[i] >= windmill.line.angle + s
+			&& windmill.relativeAngels[i] <= windmill.line.angle + s + windmill.resolution)
 			{
-				newPivot(windmill.points[i]);
+				windmill.line.newPivot(windmill.points[i]);
 				break;
 			}
 		}
 	}
-}
-
-void addPoint(Point p){
-	windmill.points.push(p);
-	recalculate();
-	resetHistory();
-}
-
-void solve(){
-	float step = 0.01;
-	for(int i = 0; i < windmill.points.length; i++) {
-		windmill.points[i].angle = atan2(windmill.points[i].y - windmill.line.pivot.y, windmill.points[i].x - windmill.line.pivot.x);
-		if(windmill.points[i].angle < 0) windmill.points[i].angle += 2*PI;
-	}
-	for(float alpha = 0; alpha <= 2*PI; alpha += step){
-		int count = 0;
-		for(int i = 0; i < windmill.points.length; i++) {
-			if(windmill.points[i].angle > alpha
-			&& windmill.points[i].angle < alpha + PI)
-				count++;
-			}
-		if(count == Math.floor(windmill.points.length/2)){
-			windmill.line.angle = alpha;
-			if(windmill.line.angle > PI) windmill.line.angle -= PI;
-			recalculate();
-			break;
-		}
-	}
-	resetHistory();
-}
-
-void resetHistory(){
-	windmill.history.data = [];
-	windmill.history.record = true;
-}
-
-class Point {
-	public float x, y, angle;
-	Point(float nx, float ny) {
-		x = nx;
-		y = ny;
-	}
-	Point(Point p){
-		x = p.x;
-		y = p.y;
-		angle = p.angle;
-	}
-	float distanceSq(Point p) {
-		return sq(this.x - p.x) + sq(this.y - p.y);
-	}
-}
-
-float distanceSq(p, q) {
-	return sq(q.x - p.x) + sq(q.y - p.y);
 }
