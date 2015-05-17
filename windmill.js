@@ -16,6 +16,7 @@ var windmill = {
 	history: {
 		show: false,
 		record: true,
+		data: [],
 	},
 	mouse: {
 		clicked: false,

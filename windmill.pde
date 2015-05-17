@@ -1,6 +1,3 @@
-// status variables
-ArrayList<Point> history = new ArrayList<Point>();
-
 void setup() {
 	size(500, 500);
 	for(int i = 0; i < windmill.constants.numberOfStartingPoints; i++) {
@@ -73,17 +70,17 @@ void display() {
 	}
 
 	if(windmill.history.show){
-		for(int i = 0; i < history.size()-1; i++) {
+		for(int i = 0; i < windmill.history.data.length-1; i++) {
 			strokeWeight(1);
 			stroke(128);
-			line(history.get(i).x,
-			     history.get(i).y,
-			     history.get(i+1).x,
-			     history.get(i+1).y);
+			line(windmill.history.data[i].x,
+			     windmill.history.data[i].y,
+			     windmill.history.data[i+1].x,
+			     windmill.history.data[i+1].y);
 
 			stroke(0,255,0);
 			strokeWeight(5);
-			point(history.get(i).x, history.get(i).y);
+			point(windmill.history.data[i].x, windmill.history.data[i].y);
 		}
 	}
 
@@ -102,16 +99,16 @@ void display() {
 void newPivot(p) {
 	windmill.line.pivot = $.extend({}, p);
 	recalculate();
-	i = history.size();
+	i = windmill.history.data.length;
 	if(i > 2){
-		if(history.get(0).x == history.get(i-1).x
-		&& history.get(0).y == history.get(i-1).y
-		&& history.get(1).x == p.x
-		&& history.get(1).y == p.y){
+		if(windmill.history.data[0].x == windmill.history.data[i-1].x
+		&& windmill.history.data[0].y == windmill.history.data[i-1].y
+		&& windmill.history.data[1].x == p.x
+		&& windmill.history.data[1].y == p.y){
 			windmill.history.record = false;
 		}
 	}
-	if(windmill.history.record) history.add(p);
+	if(windmill.history.record) windmill.history.data.push(p);
 }
 
 void recalculate() {
@@ -167,7 +164,7 @@ void solve(){
 }
 
 void resetHistory(){
-	history = new ArrayList<Point>();
+	windmill.history.data = [];
 	windmill.history.record = true;
 }
 
