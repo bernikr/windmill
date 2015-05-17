@@ -91,15 +91,15 @@ windmill.solve = function() {
 	windmill.graph.reset();
 }
 
-windmill.restart = function(){
-	windmill.points = [];
-	for(i = 0; i < windmill.constants.numberOfStartingPoints; i++) {
+windmill.restart = function(n){
+	windmill.points.length = 0;
+	for(i = 0; i < n; i++) {
 		windmill.points.push({
 			x: Math.random()*300 + 100,
 			y: Math.random()*300 + 100,
 		});
 	}
-	windmill.line.newPivot(windmill.points[Math.floor(Math.random() * windmill.constants.numberOfStartingPoints)]);
+	windmill.line.newPivot(windmill.points[Math.floor(Math.random() * n)]);
 	windmill.solve();
 }
 
@@ -129,7 +129,6 @@ $(function(){
 	});
 	$('#btn-reset button').click(reset);
 	function reset(){
-		windmill.constants.numberOfStartingPoints = $('#btn-reset input').val();
-		windmill.restart();
+		windmill.restart($('#btn-reset input').val());
 	}
 });

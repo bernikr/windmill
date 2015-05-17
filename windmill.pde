@@ -1,6 +1,6 @@
 void setup() {
 	size(500, 500);
-	windmill.restart();
+	windmill.restart(windmill.constants.numberOfStartingPoints);
 }
 
 void draw() {
