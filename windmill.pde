@@ -26,11 +26,11 @@ void setup() {
 
 void draw() {
 	display();
-	if(!paused) mainLoop();
+	if(!windmill.status.paused) mainLoop();
 }
 
 void mousePressed() {
-	if(mouseMode == 'point') {
+	if(windmill.status.mouseMode == 'point') {
 		p = new Point(mouseX, mouseY);
 		removed = false;
 		for (int i = points.size() - 1; i >= 0; i--) {
@@ -57,10 +57,10 @@ void mouseReleased() {
 
 void mouseDragged() {
 	if(locked){
-		if(mouseMode == 'move') {
+		if(windmill.status.mouseMode == 'move') {
 			pivot.x = mouseX - mousePivotDif.x;
 			pivot.y = mouseY - mousePivotDif.y;
-		} else if(mouseMode == 'rotate') {
+		} else if(windmill.status.mouseMode == 'rotate') {
 			phi = atan2(mouseY - pivot.y, mouseX - pivot.x) - mousePivotDif.angle;
 			phi = phi % PI;
 			phi += 2*PI;
@@ -82,7 +82,7 @@ void display() {
 		point(p.x, p.y);
 	}
 
-	if(colored){
+	if(windmill.status.showHistory){
 		for(int i = 0; i < history.size()-1; i++) {
 			strokeWeight(1);
 			stroke(128);
