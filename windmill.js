@@ -2,6 +2,11 @@ var windmill = {
 	mouseMode:   'point',
 	paused:	      false,
 	speed:        0.01,
+	resolution:   0.001,
+	constants: {
+		numberOfStartingPoints: 10,
+		lineLength: 1000,
+	},
 	line: {
 		pivot: {
 			x: 0,
@@ -12,6 +17,14 @@ var windmill = {
 	history: {
 		show: false,
 		record: true,
+	},
+	mouse: {
+		clicked: false,
+		relationToPivot: {
+			x: 0,
+			y: 0,
+			angle: 0,
+		},
 	},
 }
 

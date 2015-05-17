@@ -1,22 +1,15 @@
-//config
-int numberOfPoints = 10;
-int lineLength = 1000;
-float resolution = 0.001;
-
 // status variables
 ArrayList<Point> points = new ArrayList<Point>();
 ArrayList<Point> history = new ArrayList<Point>();
-Point mousePivotDif;
-boolean locked = false;
 
 void setup() {
 	size(500, 500);
-	for(int i = 0; i < numberOfPoints; i++) {
+	for(int i = 0; i < windmill.constants.numberOfStartingPoints; i++) {
 		points.add(new Point(random(100,400),random(100,400)));
 	}
-	newPivot(points.get((int)random(numberOfPoints)));
+	newPivot(points.get((int)random(windmill.constants.numberOfStartingPoints)));
 	solve();
-	mousePivotDif = new Point(0, 0);
+	windmill.mouse.relationToPivot = new Point(0, 0);
 }
 
 void draw() {
@@ -40,23 +33,23 @@ void mousePressed() {
 		recalculate();
 		resetHistory();
 	}
-	mousePivotDif.x = mouseX - windmill.line.pivot.x;
-	mousePivotDif.y = mouseY - windmill.line.pivot.y;
-	mousePivotDif.angle = atan2(mouseY - windmill.line.pivot.y, mouseX - windmill.line.pivot.x) - windmill.line.angle;
-	locked = true;
+	windmill.mouse.relationToPivot.x = mouseX - windmill.line.pivot.x;
+	windmill.mouse.relationToPivot.y = mouseY - windmill.line.pivot.y;
+	windmill.mouse.relationToPivot.angle = atan2(mouseY - windmill.line.pivot.y, mouseX - windmill.line.pivot.x) - windmill.line.angle;
+	windmill.mouse.clicked = true;
 }
 
 void mouseReleased() {
-	locked = false;
+	windmill.mouse.clicked = false;
 }
 
 void mouseDragged() {
-	if(locked){
+	if(windmill.mouse.clicked){
 		if(windmill.mouseMode == 'move') {
-			windmill.line.pivot.x = mouseX - mousePivotDif.x;
-			windmill.line.pivot.y = mouseY - mousePivotDif.y;
+			windmill.line.pivot.x = mouseX - windmill.mouse.relationToPivot.x;
+			windmill.line.pivot.y = mouseY - windmill.mouse.relationToPivot.y;
 		} else if(windmill.mouseMode == 'rotate') {
-			windmill.line.angle = atan2(mouseY - windmill.line.pivot.y, mouseX - windmill.line.pivot.x) - mousePivotDif.angle;
+			windmill.line.angle = atan2(mouseY - windmill.line.pivot.y, mouseX - windmill.line.pivot.x) - windmill.mouse.relationToPivot.angle;
 			windmill.line.angle = windmill.line.angle % PI;
 			windmill.line.angle += 2*PI;
 			windmill.line.angle = windmill.line.angle % PI;
@@ -94,10 +87,10 @@ void display() {
 
 	stroke(0);
 	strokeWeight(2);
-	line(windmill.line.pivot.x + cos(windmill.line.angle) * lineLength,
-	     windmill.line.pivot.y + sin(windmill.line.angle) * lineLength,
-	     windmill.line.pivot.x - cos(windmill.line.angle) * lineLength,
-	     windmill.line.pivot.y - sin(windmill.line.angle) * lineLength);
+	line(windmill.line.pivot.x + cos(windmill.line.angle) * windmill.constants.lineLength,
+	     windmill.line.pivot.y + sin(windmill.line.angle) * windmill.constants.lineLength,
+	     windmill.line.pivot.x - cos(windmill.line.angle) * windmill.constants.lineLength,
+	     windmill.line.pivot.y - sin(windmill.line.angle) * windmill.constants.lineLength);
 
 	stroke(255,0,0);
 	strokeWeight(5);
@@ -123,7 +116,7 @@ void newPivot(Point p) {
 void recalculate() {
 	for(Point p : points) {
 		p.angle = atan2(p.y - windmill.line.pivot.y, p.x - windmill.line.pivot.x);
-		if(p.angle < resolution) p.angle += PI;
+		if(p.angle < windmill.resolution) p.angle += PI;
 	}
 }
 
@@ -131,10 +124,10 @@ void mainLoop() {
 	windmill.line.angle += windmill.speed;
 	if(windmill.line.angle > PI) windmill.line.angle -= PI;
 
-	for(float s = 0; s <= windmill.speed; s += resolution){
+	for(float s = 0; s <= windmill.speed; s += windmill.resolution){
 		for(Point p : points) {
 			if(p.angle >= windmill.line.angle + s
-			&& p.angle <= windmill.line.angle + s + resolution)
+			&& p.angle <= windmill.line.angle + s + windmill.resolution)
 			{
 				newPivot(p);
 				break;
