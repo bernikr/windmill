@@ -1,22 +1,30 @@
 var windmill = {
-	status: {
-		mouseMode:   'point',
-		paused:	  false,
-		showHistory: false,
-	}
+	mouseMode:   'point',
+	paused:	      false,
+	speed:        0.01,
+	line: {
+		pivot: {
+			x: 0,
+			y: 0,
+		},
+		angle: 0,
+	},
+	history: {
+		show: false,
+		record: true,
+	},
 }
 
 $(function(){
 	$('#btn-pause').click(function(){
-		windmill.status.paused = !windmill.status.paused;
+		windmill.paused = !windmill.paused;
 		$('#btn-pause i')
-			.toggleClass('fa-play', windmill.status.paused)
-			.toggleClass('fa-pause', !windmill.status.paused);
-		console.log(windmill);
+			.toggleClass('fa-play', windmill.paused)
+			.toggleClass('fa-pause', !windmill.paused);
 	});
 	$('#btn-mode button').click(function(){
 		data = $(this).data('mode');
-		windmill.status.mouseMode = data;
+		windmill.mouseMode = data;
 		$('#btn-mode button').each(function(){
 			$(this).toggleClass('active', data == $(this).data('mode'));
 		});
@@ -25,8 +33,8 @@ $(function(){
 		Processing.getInstanceById('windmill').solve();
 	});
 	$('#btn-color-toggle').click(function(){
-		windmill.status.showHistory = !windmill.status.showHistory;
-		$(this).toggleClass('active', windmill.status.showHistory);
+		windmill.history.show = !windmill.history.show;
+		$(this).toggleClass('active', windmill.history.show);
 	});
 	$('#btn-color-reset').click(function(){
 		Processing.getInstanceById('windmill').resetHistory();
