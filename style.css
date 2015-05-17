@@ -34,6 +34,14 @@ canvas {
 	box-sizing: content-box;
 }
 
+.controls > * {
+	margin-bottom: 8px;
+}
+
+.controls #btn-reset {
+	width: 25%;
+}
+
 @media screen and (max-width: 810px) {
 	#fork-me {
 		display: none;

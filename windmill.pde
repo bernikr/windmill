@@ -1,13 +1,6 @@
 void setup() {
 	size(500, 500);
-	for(int i = 0; i < windmill.constants.numberOfStartingPoints; i++) {
-		windmill.points.push({
-			x: Math.random()*300 + 100,
-			y: Math.random()*300 + 100,
-		});
-	}
-	windmill.line.newPivot(windmill.points[(int)random(windmill.constants.numberOfStartingPoints)]);
-	windmill.solve();
+	windmill.restart();
 }
 
 void draw() {
