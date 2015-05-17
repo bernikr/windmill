@@ -1,5 +1,4 @@
 var windmill = {
-	mouseMode:   'point',
 	paused:	      false,
 	speed:        0.01,
 	resolution:   0.001,
@@ -20,12 +19,14 @@ var windmill = {
 	},
 	mouse: {
 		clicked: false,
+		mode:   'point',
 		relationToPivot: {
 			x: 0,
 			y: 0,
 			angle: 0,
 		},
 	},
+	points: [],
 }
 
 $(function(){
@@ -37,7 +38,7 @@ $(function(){
 	});
 	$('#btn-mode button').click(function(){
 		data = $(this).data('mode');
-		windmill.mouseMode = data;
+		windmill.mouse.mode = data;
 		$('#btn-mode button').each(function(){
 			$(this).toggleClass('active', data == $(this).data('mode'));
 		});
