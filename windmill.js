@@ -131,4 +131,12 @@ $(function(){
 	function reset(){
 		windmill.restart($('#btn-reset input').val());
 	}
+	$("#inp-speed").change(function(){
+		var percent = $("#inp-speed").val()
+
+		if (percent <= 1000 && percent >= 25)
+			windmill.speed = 0.0001 * percent
+		else
+			alert("Please enter a number between 25 and 1000")		
+	})
 });
